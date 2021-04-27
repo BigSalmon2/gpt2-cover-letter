@@ -13,9 +13,9 @@ requests_queue = Queue()
 BATCH_SIZE = 1
 CHECK_INTERVAL = 0.1
 
-tokenizer = AutoTokenizer.from_pretrained("jonasmue/cover-letter-gpt2")
-model = AutoModelWithLMHead.from_pretrained("jonasmue/cover-letter-gpt2", return_dict=True)
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+tokenizer = AutoTokenizer.from_pretrained("gpt2-large")
+model = AutoModelWithLMHead.from_pretrained("gpt2-large", return_dict=True)
+device = torch.device('cpu')
 model.to(device)
 
 # Queue 핸들링
@@ -40,6 +40,38 @@ threading.Thread(target=handle_requests_by_batch).start()
 
 def run_generation(sequence, num_samples, length):
     try:
+        bad_word_ids = [
+            [10134],
+            [318], 
+            [1716], 
+            [373], 
+            [655],
+            [198],
+            [468],
+            [1394],
+            [1464],
+            [790],
+            [4477],
+            [867],
+            [3236],
+            [4858],
+            [1588],
+            [1263],
+            [1029],
+            [3607],
+            [1838],
+            [1049],
+            [9812],
+            [12465],
+            [2048],
+            [617],
+            [423],
+            [7448],
+            [389],
+            [550],
+            [1595],
+            [470],
+        ]
         sequence = sequence.strip()
         input_ids = tokenizer.encode(sequence, return_tensors='pt')
 
@@ -54,7 +86,8 @@ def run_generation(sequence, num_samples, length):
                                         max_length=length,
                                         min_length=length,
                                         top_k=40,
-                                        num_return_sequences=num_samples)
+                                        num_return_sequences=num_samples,
+                                        bad_words_ids = bad_word_ids)
 
         result = dict()
         for idx, sample_output in enumerate(sample_outputs):
