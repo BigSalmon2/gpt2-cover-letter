@@ -13,8 +13,8 @@ requests_queue = Queue()
 BATCH_SIZE = 1
 CHECK_INTERVAL = 0.1
 
-tokenizer = AutoTokenizer.from_pretrained("gpt2-large")
-model = AutoModelWithLMHead.from_pretrained("gpt2-large", return_dict=True)
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
+model = AutoModelWithLMHead.from_pretrained("gpt2", return_dict=True)
 device = torch.device('cpu')
 model.to(device)
 
